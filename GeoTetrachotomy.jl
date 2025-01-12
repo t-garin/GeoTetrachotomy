@@ -57,8 +57,8 @@ end
 latdicho(value:: Number, n:: Int) = _get_dicho(value, n,  -90,  90)
 londicho(value:: Number, n:: Int) = _get_dicho(value, n, -180, 180)
 
-randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
-randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
+randlat(n::Int)::Vector{Float16} = (rand(n).-0.5) * 180
+randlon(n::Int)::Vector{Float16} = (rand(n).-0.5) * 360
 
 function dicho(ll::LatLon, precision::Int)::TetraBV
     return TetraBV(
@@ -75,8 +75,8 @@ function test(npoints::Int, precision::Int)
     tetras = [dicho(ll, precision) for ll in latlon]
     deltas = [delta(ll, precision) for ll in latlon]
     
-    pprint(ll::LatLon) = print(sizeof(ll.lat), " & ", sizeof(ll.lon), " bytes")
-    pprint(tt::TetraBV) = print(sizeof(tt.lat), " & ", sizeof(tt.lon), " bytes")
+    pprint(ll::LatLon) = print(length(bitstring(ll.lat)), " & ", length(bitstring(ll.lon)), " bits")
+    pprint(tt::TetraBV) = print(length(bitstring(tt.lat)), " & ", length(bitstring(tt.lon)), " bits")
 
     for (ll, tt, ds) in zip(latlon, tetras, deltas)
         @show ll.lat, ll.lon, ds
@@ -85,5 +85,4 @@ function test(npoints::Int, precision::Int)
         pprint(tt)
         print('\n')
     end
-    # return tetras#, deltas
 end
