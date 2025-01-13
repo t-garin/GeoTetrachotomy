@@ -1,7 +1,7 @@
 using ArgCheck
 using BenchmarkTools
 import Base: bitstring
-
+using Plots
 # using DataStructures: DiBitVector
 # struct Tetra
 #     # DiBitVector to represent the tetrachotomy
@@ -97,8 +97,8 @@ function getlatlon(tt::Tetra)::LatLon
 
     return LatLon(lat, lon)
 end
-randlat(n::Int)::Vector{Float16} = (rand(n).-0.5) * 180
-randlon(n::Int)::Vector{Float16} = (rand(n).-0.5) * 360
+randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
+randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
 
 randLatLon() = LatLon(randlat(1)[1], randlon(1)[1])
 
@@ -109,8 +109,8 @@ distance(ll1::LatLon, ll2::LatLon) = distance((ll1.lat, ll1.lon), (ll2.lat, ll2.
 function test(npoints::Int, precision::Int)
     latlon = [LatLon(lat, lon) for (lat, lon) in zip(randlat(npoints), randlon(npoints))]
     tetras = [dicho(ll, precision) for ll in latlon]
-
-    for (ll, tt) in zip(latlon, tetras)
+    dist = Vector(undef, npoints)
+    for (ll, tt, i) in zip(latlon, tetras, 1:npoints)
         @show ll.lat, ll.lon
         print("\n Latlon ", bitstring(ll), "\n $(length(bitstring(ll))) bits")
         print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits\n\n")
@@ -118,5 +118,11 @@ function test(npoints::Int, precision::Int)
         newll = getlatlon(tt)
         @show newll.lat, newll.lon
         @show distance(ll, newll)
+        dist[i] = distance(ll, newll)
+        
     end
+    return dist
 end
+
+d = test(100, 8)
+plot(sort(d))
