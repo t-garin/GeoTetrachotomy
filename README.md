@@ -64,3 +64,39 @@ At around 25 tetrachotomy, the haversine distance is sub-metric, which is more t
 
 ![fig1.png](fig1.png)
 
+If all points in a file start with the same bits
+
+``+213302:1.32``
+
+``+213301:56.9`` 
+
+``+213323:-2.6`` 
+
+``+213303:6645``
+
+Then the file can just store the 'header' and spare even more bits:
+
+``+2133``
+
+``>02:1.32``
+
+``>01:56.9``
+
+``>23:-2.6``
+
+``>03:6645``
+
+We can also imagine whole trees (if the order is not of importance in this case). There may be a point when its counter productive. 
+
+``+2133``
+
+``>0``
+
+``>>2:1.32``
+
+``>>1:56.9``
+
+``>>3:6645``
+
+``>23:-2.6``
+
