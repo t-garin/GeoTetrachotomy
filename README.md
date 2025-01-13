@@ -13,7 +13,7 @@ This repo is meant (for now ?) as a demostration, toy model, and not a all a pro
 
 ## 1. Concept
 
-The main idea is to represent geographic data, more specifically geographic points (from which we can derive lines and polygons) using what is called here '_tetrachotomy_'. 
+The main idea is to represent geographic data, more specifically geographic points (from which we can derive lines and polygons, but i would also argue that is could be used to represent raster data too, even if the conversion is less immediate) using what is called here '_tetrachotomy_'. 
 
 To illustrate this, lets take the [Bisection method](https://en.wikipedia.org/wiki/Bisection_method): it allows finding the root of a function using successives dichotomies, the root can then either be described as a real number, or one can describe this root using the sucessive dichotomies used to find it. For example if we note 0 (resp. 1) at every step if the root is in the left (resp. right) half of the segment, then the root can be encoded as (e.g.) 01001, meaning here that we did 5 dichotomies and the root we found was "left, right, left, left, right".
 
