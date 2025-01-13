@@ -1,41 +1,24 @@
 using BenchmarkTools
-using DataStructures: DiBitVector
+
+# using DataStructures: DiBitVector
+# struct Tetra
+#     # DiBitVector to represent the tetrachotomy
+#     dbv::DiBitVector
+# end
 
 struct Tetra
-    # DiBitVector to represent the tetrachotomy
-    dbv::DiBitVector
-end
-
-struct TetraBV
+    #webit: West-East bit
+    webit::Bool
     lat::BitVector
     lon::BitVector
 end
 
-struct TetraVB
-    lat::Vector{Bool}
-    lon::Vector{Bool}
-end
-
-"geopoint representation using latlon"
 struct LatLon
     # latitude
     lat::Number
     # longitude
     lon::Number
 end
-
-ll = LatLon(Float64(0), Float64(0))
-
-a = [0,1,1,0,0,1,0,1,0]
-b = [1,0,1,0,0,1,0,1,0]
-
-bv = TetraBV(a, b)
-vb = TetraVB(a, b)
-
-#check different sizes
-varinfo()
-sizeof(vb)
-sizeof(bv)
 
 function _get_dicho(value::Number, n::Int, lmin::Number, lmax::Number)
     dicho = BitVector(undef, n)
@@ -86,5 +69,3 @@ function test(npoints::Int, precision::Int)
         print('\n')
     end
 end
-
-#put 0 for south/west hémisphère, 1 for north/east and then dichotomy (will give the same delta for lat and for lon)
