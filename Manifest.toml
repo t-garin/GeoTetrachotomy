@@ -2,7 +2,12 @@
 
 julia_version = "1.11.2"
 manifest_format = "2.0"
-project_hash = "293341ea77732b518bf4ca0a9aab105d85ea5c1c"
+project_hash = "9c9a9c2ad6b7f45d3360ac4d31b1d71af41cb31c"
+
+[[deps.ArgCheck]]
+git-tree-sha1 = "680b3b8759bd4c54052ada14e52355ab69e07876"
+uuid = "dce04be8-c92d-5529-be00-80e4d2c0e197"
+version = "2.4.0"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"

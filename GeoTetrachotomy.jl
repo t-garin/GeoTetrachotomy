@@ -1,17 +1,12 @@
+using ArgCheck
 using BenchmarkTools
+import Base: bitstring
 
 # using DataStructures: DiBitVector
 # struct Tetra
 #     # DiBitVector to represent the tetrachotomy
 #     dbv::DiBitVector
 # end
-
-struct Tetra
-    #webit: West-East bit
-    webit::Bool
-    lat::BitVector
-    lon::BitVector
-end
 
 struct LatLon
     # latitude
@@ -20,7 +15,24 @@ struct LatLon
     lon::Number
 end
 
-function _get_dicho(value::Number, n::Int, lmin::Number, lmax::Number)
+struct Tetra
+    #webit: West-East bit
+    # 1 bit bitvector, not bool cause
+    # use 8bit by default
+    webit::BitVector
+    lat::BitVector
+    lon::BitVector
+end
+
+function bitstring(tt::Tetra)
+    bitstring(tt.webit)*join([blat*blon for (blat, blon) in zip(bitstring(tt.lat), bitstring(tt.lon))])
+end
+
+function bitstring(ll::LatLon)
+    bitstring(ll.lat)*bitstring(ll.lon)
+end
+
+function _dicho(value::Number, n::Int, lmin::Number, lmax::Number)
     dicho = BitVector(undef, n)
     for i in 1:n
         lmid = mean((lmin, lmax))
@@ -34,38 +46,47 @@ function _get_dicho(value::Number, n::Int, lmin::Number, lmax::Number)
             lmin = lmid
         end 
     end
-    return dicho, abs(lmax - lmin)
+    return dicho#, abs(lmax - lmin)
 end
 
-latdicho(value:: Number, n:: Int) = _get_dicho(value, n,  -90,  90)
-londicho(value:: Number, n:: Int) = _get_dicho(value, n, -180, 180)
+const NSrng = (-90, 90)
+const Whemi = (-180, 0)
+const Ehemi = (0, +180)
+lat_dicho(value:: Number, n:: Int) = _dicho(value, n, NSrng...)
+lonWdicho(value:: Number, n:: Int) = _dicho(value, n, Whemi...)
+lonEdicho(value:: Number, n:: Int) = _dicho(value, n, Ehemi...)
 
-randlat(n::Int)::Vector{Float16} = (rand(n).-0.5) * 180
-randlon(n::Int)::Vector{Float16} = (rand(n).-0.5) * 360
-
-function dicho(ll::LatLon, precision::Int)::TetraBV
-    return TetraBV(
-        latdicho(ll.lat, precision)[1],
-        londicho(ll.lon, precision)[1]
-    )
+function isEast(lon::Number)::Bool
+    if Whemi[1] ≤ lon ≤ Whemi[2]
+        return false
+    elseif Ehemi[1] ≤ lon ≤ Ehemi[2]
+        return true
+    else
+        @error "lon is neither in Whemi nor in Ehemi"
+    end
 end
 
-function delta(ll::LatLon, precision::Int)
-    return (latdicho(ll.lat, precision)[2], londicho(ll.lon, precision)[2])
+function dicho(ll::LatLon, precision::Int)::Tetra
+    webit = BitVector(undef, 1)
+    if isEast(ll.lon)
+        webit[1] = 1 
+    else 
+        webit[0] = 0
+    end
+    Tetra(webit, lat_dicho(ll.lat, precision), lonEdicho(ll.lon, precision))
 end
+
+
 function test(npoints::Int, precision::Int)
+    randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
+    randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
+
     latlon = [LatLon(lat, lon) for (lat, lon) in zip(randlat(npoints), randlon(npoints))]
     tetras = [dicho(ll, precision) for ll in latlon]
-    deltas = [delta(ll, precision) for ll in latlon]
-    
-    pprint(ll::LatLon) = print(length(bitstring(ll.lat)), " & ", length(bitstring(ll.lon)), " bits")
-    pprint(tt::TetraBV) = print(length(bitstring(tt.lat)), " & ", length(bitstring(tt.lon)), " bits")
-
-    for (ll, tt, ds) in zip(latlon, tetras, deltas)
-        @show ll.lat, ll.lon, ds
-        pprint(ll)
-        print('\t')
-        pprint(tt)
-        print('\n')
+    return tetras[1]
+    for (ll, tt) in zip(latlon, tetras)
+        @show ll.lat, ll.lon
+        print("\n Latlon ", bitstring(ll), " bits")
+        print("\n Tetra  ", bitstring(tt), " bits")
     end
 end
