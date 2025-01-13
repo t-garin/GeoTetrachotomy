@@ -1,8 +1,15 @@
 using ArgCheck
 using BenchmarkTools
-import Base: bitstring
 using Plots
-# using DataStructures: DiBitVector
+
+import Base: bitstring
+import Distances: haversine
+
+function haversine(ll1::LatLon, ll2::LatLon)
+    haversine((ll1.lat, ll1.lon), (ll2.lat, ll2.lon))
+end 
+
+#using DataStructures: DiBitVector
 # struct Tetra
 #     # DiBitVector to represent the tetrachotomy
 #     dbv::DiBitVector
@@ -105,18 +112,18 @@ end
 
 function getlatlon(tt::Tetra)::LatLon
     lat, lon = 0, 0
+    #
     tt.webit == [1] ? lon += 90 : lon -= 90
-
+    #
     for i in 1:length(tt.lat)
         step = 45/(2^(i-1))
         tt.lat[i] == 1 ? lat += step : lat -= step 
     end
-
+    #
     for i in 1:length(tt.lon)
         step = 45/(2^(i-1))
         tt.lon[i] == 1 ? lon += step : lon -= step 
     end
-
     return LatLon(lat, lon)
 end
 randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
@@ -140,11 +147,36 @@ function test(npoints::Int, precision::Int)
         newll = getlatlon(tt)
         @show newll.lat, newll.lon
         @show distance(ll, newll)
-        dist[i] = distance(ll, newll)
+        dist[i] = haversine(ll, newll)
         
     end
     return dist
 end
 
-d = test(100, 8)
-plot(sort(d))
+# d = test(100, 8)
+# plot(sort(d))
+
+
+function convergence()
+    min_precision = 1
+    max_precision = 64
+    distances_moyennes = [mean(test(100, i)) for i in min_precision:max_precision]
+    bitdiff = [128 - (2*i)+1 for i in min_precision:max_precision]
+    return distances_moyennes, bitdiff
+end
+
+dist, bitdiff = convergence()
+
+
+l = @layout [a b]
+p1 = plot(
+    dist, yaxis=:log,
+    label = "haversine"
+    )
+p2 = plot(
+    bitdiff,
+    label = "bit usage gain"    
+    )
+plot(p1, p2, layout = l, xlabel = "number of tetrachotomy")
+
+png("fig1.png")
