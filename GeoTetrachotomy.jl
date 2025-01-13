@@ -30,6 +30,29 @@ function bitstring(tt::Tetra)
     return bitstring(tt.webit)*join([blat*blon for (blat, blon) in zip(latbit, lonbit)])
 end
 
+function base4(tt::Tetra)
+    latbit = replace(bitstring(tt.lat), " " => "")
+    lonbit = replace(bitstring(tt.lon), " " => "")
+    base4 = ""
+    for (blat, blon) in zip(latbit, lonbit)
+        if     blat == '0' && blon == '0'
+            base4*='0'
+        elseif blat == '0' && blon == '1'
+            base4*='1'
+        elseif blat == '1' && blon == '0'
+            base4*='2'
+        elseif blat == '1' && blon == '1'
+            base4*='3'
+        else 
+            @error "shouldnt be possible"
+            print(blat," ", blon)
+            print(typeof(blat))
+        end
+    end
+    tt.webit[1] == 1 ? sign = '+' : sign = '-'
+    return sign*base4
+end
+
 function bitstring(ll::LatLon)
     bitstring(ll.lat)*bitstring(ll.lon)
 end
@@ -82,7 +105,8 @@ end
 
 function getlatlon(tt::Tetra)::LatLon
     lat, lon = 0, 0
- 
+    tt.webit == [1] ? lon += 90 : lon -= 90
+
     for i in 1:length(tt.lat)
         step = 45/(2^(i-1))
         tt.lat[i] == 1 ? lat += step : lat -= step 
@@ -92,8 +116,6 @@ function getlatlon(tt::Tetra)::LatLon
         step = 45/(2^(i-1))
         tt.lon[i] == 1 ? lon += step : lon -= step 
     end
-
-    tt.webit == 1 ? lon -= 90 : lon += 90
 
     return LatLon(lat, lon)
 end
@@ -113,8 +135,8 @@ function test(npoints::Int, precision::Int)
     for (ll, tt, i) in zip(latlon, tetras, 1:npoints)
         @show ll.lat, ll.lon
         print("\n Latlon ", bitstring(ll), "\n $(length(bitstring(ll))) bits")
-        print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits\n\n")
-
+        print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits")
+        print("\n Tetra  ", base4(tt), "\n\n")
         newll = getlatlon(tt)
         @show newll.lat, newll.lon
         @show distance(ll, newll)
