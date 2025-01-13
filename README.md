@@ -5,6 +5,9 @@ _Representing Geographic Points Using Earth's Tetrachotomy_
 # WORK IN PROGRESS
 ``+ i code like shit so be nice``
 
+__FEEL FREE TO REUSE AND DO WHATEVER YOU WANT WITH THIS IDEA__ 
+
+_(just maybe mention me if you would be so kind hihi :point_right: :point_left:)_
 
 This repo is meant (for now ?) as a demostration, toy model, and not a all a production ready framework. 
 
