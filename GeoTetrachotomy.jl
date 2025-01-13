@@ -97,10 +97,14 @@ function getlatlon(tt::Tetra)::LatLon
 
     return LatLon(lat, lon)
 end
-randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
-randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
+randlat(n::Int)::Vector{Float16} = (rand(n).-0.5) * 180
+randlon(n::Int)::Vector{Float16} = (rand(n).-0.5) * 360
 
 randLatLon() = LatLon(randlat(1)[1], randlon(1)[1])
+
+
+distance(t1::Tuple, t2::Tuple) = sqrt((t1[1]-t2[1])^2 + (t1[2]-t2[2])^2)
+distance(ll1::LatLon, ll2::LatLon) = distance((ll1.lat, ll1.lon), (ll2.lat, ll2.lon))
 
 function test(npoints::Int, precision::Int)
     latlon = [LatLon(lat, lon) for (lat, lon) in zip(randlat(npoints), randlon(npoints))]
@@ -109,9 +113,10 @@ function test(npoints::Int, precision::Int)
     for (ll, tt) in zip(latlon, tetras)
         @show ll.lat, ll.lon
         print("\n Latlon ", bitstring(ll), "\n $(length(bitstring(ll))) bits")
-        print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits")
+        print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits\n\n")
 
         newll = getlatlon(tt)
         @show newll.lat, newll.lon
+        @show distance(ll, newll)
     end
 end
