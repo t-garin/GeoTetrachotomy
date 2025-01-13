@@ -171,7 +171,7 @@ dist, bitdiff = convergence()
 l = @layout [a b]
 p1 = plot(
     dist, yaxis=:log,
-    label = "haversine"
+    label = "haversine distance (m)"
     )
 p2 = plot(
     bitdiff,

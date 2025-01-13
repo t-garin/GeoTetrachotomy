@@ -18,7 +18,7 @@ Here the tetrachotomy comes from the fact that we do this dichotomy find on both
 
 ## 2. Why ? 
 
-It seems from afar that it could lead to a more compact way of representing geopoints compared to the classical (Float64, Float64) enconding that takes 128 bytes to store one point. This repo aims at answering at least partly to this interrogation. Well, its probably pointless since float64 compression algorithms are very efficient, but it's a fun concept to explore and gives a nice, more human readable bit representation of geographical data. Other methods using fractal representations, other shapes than quadrants can also be used (i guess?), but it's nowhere near as simple.
+It seems from afar that it could lead to a more compact way of representing geopoints compared to the classical (Float64, Float64) enconding that takes 128 bytes to store one point. This repo aims at answering at least partly to this interrogation. Well, its probably pointless since float64 compression algorithms are very efficient, but it's a fun concept to explore and gives a nice, more human readable bit representation of geographical data. Other methods using fractal representations, other shapes than quadrants can also be used (I guess?), but it's nowhere near as simple. Also it is in Julia because I like Julia :) I will maybe do a Python implemntation someday (probably not).
 
 ## 3. How ?
 
@@ -37,7 +37,7 @@ This section describes the data structure that is a '_tetra_' (the writing '_tet
 - ...etc 
 
 In base 4:
-- We replace the first bit by ``-`` (resp. ``+``) if it is in the western (resp. eastern) hemisphere.
+- We replace the first bit by ``-`` (resp. ``+``) if it is in the western (resp. eastern) hemisphere. Ìn other words``0 -> -``, ``1 -> +``. 
 - The pairs of bits are represented in base 4
 
 ->``+213030``
@@ -46,11 +46,7 @@ This can also be interpreted as a list of directions:
 
 -> ``E NW SE NE SW NE SW``
 
+## 4. Is it efficient ? 
 
 ![fig1.png](fig1.png)
 
-why not other methods ?
--> well i'm pretty sure other methods such as using fractals of different shape n-chotometry could lead to more compact representation, but this one seems to be the easiest to implement
-
-why julia
--> well i like it
