@@ -86,3 +86,5 @@ function test(npoints::Int, precision::Int)
         print('\n')
     end
 end
+
+#put 0 for south/west hémisphère, 1 for north/east and then dichotomy (will give the same delta for lat and for lon)
