@@ -2,6 +2,9 @@
 
 _Representing Geographic Points Using Earth's Tetrachotomy_
 
+# WORK IN PROGRESS
+``+ i code like shit so be nice``
+
 main idea
 -> represent geographic data using a number of tetrachotomy, subdivisions in 4 quadrants. 
 
@@ -11,6 +14,7 @@ example:
 why ? 
 -> well it's fun + i believe it can lead to a very compact way of representing geopoints
 
+![fig1.png](fig1.png)
 
 why not other methods ?
 -> well i'm pretty sure other methods such as using fractals of different shape n-chotometry could lead to more compact representation, but this one seems to be the easiest to implement
