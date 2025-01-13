@@ -160,7 +160,7 @@ end
 function convergence()
     min_precision = 1
     max_precision = 64
-    distances_moyennes = [mean(test(100, i)) for i in min_precision:max_precision]
+    distances_moyennes = [mean(test(1000, i)) for i in min_precision:max_precision]
     bitdiff = [128 - (2*i)+1 for i in min_precision:max_precision]
     return distances_moyennes, bitdiff
 end

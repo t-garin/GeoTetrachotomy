@@ -48,5 +48,16 @@ This can also be interpreted as a list of directions:
 
 ## 4. Is it efficient ? 
 
+In this figure, left subplot shows the haversine distance in m (computed using Distances.jl) between a Point(Float64, Float64) and its Tetra representation, based on the number of tetrachotomy performed. On the right it shows the amount of _uncompressed_ bit that the tetra representation saves based on the number of tetrachotomy. This was computed on 1000 random geopoints per amount of tetrachotomy. 
+
+The number of spared bits is easy to compute: 
+- An uncompressed pair of float64 numbers occupy ``64 + 64 = 128``bits
+- A tetraN object occupies ``2*N+1`` bits (1 bit for the first dichotomy, N for lat, N for lon) - _if we have a tetra64 object, it is bigger than two float64 ojects by one bit_.
+- So the right curve formula is ``y = 128-(2*x+1)``,  
+
+As it is a dichotomy, the exponential slope of the left curve (linear because of the log scale) is not surprising since the interval size is divided by ``1/2^i`` at step ``i`` compared to the original one. 
+
+At around 25 tetrachotomy, the haversine distance is sub-metric, which is more than enough for most GIS applications, while using roughly 60% less bits. This is of course a WIP, and the code isnt the most clean, but i will continue looking into it. 
+
 ![fig1.png](fig1.png)
 
