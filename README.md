@@ -21,7 +21,7 @@ Here the tetrachotomy comes from the fact that we do this dichotomy find on both
 
 ## 2. Why ? 
 
-It seems from afar that it could lead to a more compact way of representing geopoints compared to the classical (Float64, Float64) enconding that takes 128 bytes to store one point. This repo aims at answering at least partly to this interrogation. Well, its probably pointless since float64 compression algorithms are very efficient, but it's a fun concept to explore and gives a nice, more human readable bit representation of geographical data. Other methods using fractal representations, other shapes than quadrants can also be used (I guess?), but it's nowhere near as simple. Also it is in Julia because I like Julia :) I will maybe do a Python implemntation someday (probably not).
+It seems from afar that it could lead to a more compact way of representing geopoints compared to the classical (Float64, Float64) enconding that takes 128 bytes to store one point. This repo aims at answering at least partly to this interrogation. Well, its probably pointless since float64 compression algorithms are very efficient, but it's a fun concept to explore and gives a nice, more human readable bit representation of geographical data. Other methods using fractal representations, complex numbers, other shapes than quadrants can also be used (I guess?), but it's nowhere near as simple. Also it is in Julia because I like Julia :) I will maybe do a Python implemntation someday (probably not).
 
 ## 3. How ?
 
