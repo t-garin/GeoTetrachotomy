@@ -25,7 +25,9 @@ struct Tetra
 end
 
 function bitstring(tt::Tetra)
-    bitstring(tt.webit)*join([blat*blon for (blat, blon) in zip(bitstring(tt.lat), bitstring(tt.lon))])
+    latbit = replace(bitstring(tt.lat), " " => "")
+    lonbit = replace(bitstring(tt.lon), " " => "")
+    return bitstring(tt.webit)*join([blat*blon for (blat, blon) in zip(latbit, lonbit)])
 end
 
 function bitstring(ll::LatLon)
@@ -46,7 +48,7 @@ function _dicho(value::Number, n::Int, lmin::Number, lmax::Number)
             lmin = lmid
         end 
     end
-    return dicho#, abs(lmax - lmin)
+    return dicho
 end
 
 const NSrng = (-90, 90)
@@ -70,23 +72,46 @@ function dicho(ll::LatLon, precision::Int)::Tetra
     webit = BitVector(undef, 1)
     if isEast(ll.lon)
         webit[1] = 1 
+        return Tetra(webit, lat_dicho(ll.lat, precision), lonEdicho(ll.lon, precision))
     else 
-        webit[0] = 0
+        webit[1] = 0
+        return Tetra(webit, lat_dicho(ll.lat, precision), lonWdicho(ll.lon, precision))
     end
-    Tetra(webit, lat_dicho(ll.lat, precision), lonEdicho(ll.lon, precision))
+    
 end
 
+function getlatlon(tt::Tetra)::LatLon
+    lat, lon = 0, 0
+ 
+    for i in 1:length(tt.lat)
+        step = 45/(2^(i-1))
+        tt.lat[i] == 1 ? lat += step : lat -= step 
+    end
+
+    for i in 1:length(tt.lon)
+        step = 45/(2^(i-1))
+        tt.lon[i] == 1 ? lon += step : lon -= step 
+    end
+
+    tt.webit == 1 ? lon -= 90 : lon += 90
+
+    return LatLon(lat, lon)
+end
+randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
+randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
+
+randLatLon() = LatLon(randlat(1)[1], randlon(1)[1])
 
 function test(npoints::Int, precision::Int)
-    randlat(n::Int)::Vector{Float64} = (rand(n).-0.5) * 180
-    randlon(n::Int)::Vector{Float64} = (rand(n).-0.5) * 360
-
     latlon = [LatLon(lat, lon) for (lat, lon) in zip(randlat(npoints), randlon(npoints))]
     tetras = [dicho(ll, precision) for ll in latlon]
-    return tetras[1]
+
     for (ll, tt) in zip(latlon, tetras)
         @show ll.lat, ll.lon
-        print("\n Latlon ", bitstring(ll), " bits")
-        print("\n Tetra  ", bitstring(tt), " bits")
+        print("\n Latlon ", bitstring(ll), "\n $(length(bitstring(ll))) bits")
+        print("\n Tetra  ", bitstring(tt), "\n $(length(bitstring(tt))) bits")
+
+        newll = getlatlon(tt)
+        @show newll.lat, newll.lon
     end
 end
