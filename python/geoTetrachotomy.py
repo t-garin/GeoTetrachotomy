@@ -46,14 +46,34 @@ class Tetra():
         self.x = x 
         self.y = y
         
-        self.bits = [self.ebit] + self.x + self.y
-        self.bitrepr = self._bitrepr()
+        self.xy = [
+            item for pair in zip(self.x, self.y)
+            for item in pair
+        ]
+        
+        self.bitArray = bitstring.BitArray(
+            [self.ebit] + self.xy
+        )
+
+        self.base4repr = self._base4repr()
 
     def __repr__(self) -> None:
-        return f"{self.bitrepr}"
-    
-    def _bitrepr(self) -> None:
-        return bitstring.BitArray(self.bits) 
+        return f"{self.bitArray.bin} | {self.base4repr}"
+
+    def _base4repr(self) -> None:
+        base4 = "+" if self.ebit else "-"
+        for x, y in zip(self.x, self.y):
+            if x == False and y == False:
+                base4 += "0" # 00
+            elif x == False and y == True:
+                base4 += "1" # 01
+            elif x == True and y == False:
+                base4 += "2" # 10
+            elif x == True and y == True:
+                base4 += "3" # 11
+            else:
+                raise ValueError("")
+        return base4
 
     def toLatLon(self):
         lat, lon = 0, 0
@@ -115,10 +135,8 @@ def _getDichotomy(target: Number, precision: int, inf: Number, sup: Number) -> l
 
 
 if __name__ == '__main__':
-    print(_isEast(179))
-    print(bitstring.BitArray(_getDichotomy(57.8999, 25, 0, 90)))
-
     ll = LatLon(46.66, 8.90)
+    tt = ll.toTetra(8)
     
-    print(ll.toTetra(25))
-    print(ll.toTetra(25).toLatLon())
+    print(tt)
+    print(tt.toLatLon())
