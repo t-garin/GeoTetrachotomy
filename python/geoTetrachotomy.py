@@ -11,6 +11,9 @@ class LatLon():
         self.lat = lat
         self.lon = lon
 
+    def __repr__(self):
+        return f"({self.lat}, {self.lon})"
+
     def toTetra(self, precision: int):
         """
             - ebit: east bit, 1 if in eastern hemisphere, 0 otherwise
@@ -34,8 +37,37 @@ class LatLon():
             target = self.lat, precision = precision, 
             inf = -90, sup = 90
         )
-        return ebit, x, y
-            
+        return Tetra(ebit, x, y)
+
+class Tetra():
+
+    def __init__(self, ebit: bool, x: list[bool], y: list[bool]) -> None:
+        self.ebit = ebit
+        self.x = x 
+        self.y = y
+        
+        self.bits = [self.ebit] + self.x + self.y
+        self.bitrepr = self._bitrepr()
+
+    def __repr__(self) -> None:
+        return f"{self.bitrepr}"
+    
+    def _bitrepr(self) -> None:
+        return bitstring.BitArray(self.bits) 
+
+    def toLatLon(self):
+        lat, lon = 0, 0
+        lon += 90 if self.ebit else -90
+        
+        for i, bit in enumerate(self.x):
+            step = 45/(2**i)
+            lon += step if bit else -step
+        
+        for i, bit in enumerate(self.y):
+            step = 45/(2**i)
+            lat += step if bit else -step
+
+        return LatLon(lat, lon)
 
 @numba.njit
 def _isEast(lon: Number) -> bool:
@@ -80,13 +112,6 @@ def _getDichotomy(target: Number, precision: int, inf: Number, sup: Number) -> l
     return dicho
 
 
-# class Tetra():
-
-#     def __init__(self, webit, x, y) -> None:
-#         ...
-
-#     def toLatLon(self):
-#         ...
 
 
 if __name__ == '__main__':
@@ -94,4 +119,6 @@ if __name__ == '__main__':
     print(bitstring.BitArray(_getDichotomy(57.8999, 25, 0, 90)))
 
     ll = LatLon(46.66, 8.90)
+    
     print(ll.toTetra(25))
+    print(ll.toTetra(25).toLatLon())
