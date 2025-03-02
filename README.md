@@ -62,7 +62,7 @@ As it is a dichotomy, the exponential slope of the left curve (linear because of
 
 At around 25 tetrachotomy, the haversine distance is sub-metric, which is more than enough for most GIS applications, while using roughly 60% less bits. This is of course a WIP, and the code isnt the most clean, but i will continue looking into it. 
 
-![fig1.png](fig1.png)
+![fig1.png](julia/fig1.png)
 
 If all points in a file start with the same bits
 
