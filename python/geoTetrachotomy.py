@@ -133,7 +133,6 @@ def _getDichotomy(target: Number, precision: int, inf: Number, sup: Number) -> l
 
 
 
-
 if __name__ == '__main__':
     ll = LatLon(46.66, 8.90)
     tt = ll.toTetra(8)
